@@ -1,5 +1,5 @@
 BIG DATA PRACTICAL JOURNAL - ALL CODES
-Akash Giri | 44030725007 | MSC CS Sem - III
+MSC CS Sem - III
 ==========================================================================
 
 
