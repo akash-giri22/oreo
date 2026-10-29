@@ -1,0 +1,2174 @@
+Practical 01: Basic Blockchain Technology
+
+Question 01 - Demonstration of a Blockchain for adding two numbers
+
+Filename: add.js
+const c = require('crypto');
+
+class Block {
+constructor(i, t, n1, n2, ph = '') { this.i = i;
+this.t = t; this.n1 = n1; this.n2 = n2; this.ph = ph;
+this.sum = n1 + n2; this.h = this.callHash();
+};
+
+callHash() {
+return c.createHash('sha256').update(this.i + this.t + this.sum + this.ph).digest("hex");
+}
+};
+
+class Blockchain { constructor() {
+this.chain = [this.createGBlock()];
+}
+
+createGBlock() {
+return new Block(0, Date.now(), 0, 0, '');
+};
+
+getCBlock() {
+return this.chain[this.chain.length - 1];
+}
+
+addBlock(b) {
+b.ph = this.getCBlock().h;
+b.h = b.callHash(); this.chain.push(b);
+}
+}
+
+module.exports.Block = Block; module.exports.Blockchain = Blockchain;
+Filename: test.js
+const { Block, Blockchain } = require('./add'); let sm = new Blockchain();
+ sm.addBlock(new Block(1, Date.now(), 12,24)); sm.addBlock(new Block(2, Date.now(), 58,9)); console.log(JSON.stringify(sm, null, 3));
+
+Question 02 - Demonstration of a Blockchain for checking whether a number is a prime number or not
+
+Filename: prime.js
+const c = require('crypto');
+
+class Block {
+constructor(i, t, n, ph = '') { this.i = i;
+this.t = t; this.n = n; this.ph = ph;
+this.prime = this.checkPrime(n); this.h = this.callHash();
+};
+
+callHash() {
+return c.createHash('sha256').update(this.i + this.t + this.prime + this.ph).digest("hex");
+}
+
+checkPrime(n) {
+for (let i = 2; i < n; i++) if (n % i === 0)
+return false; return true;
+};
+};
+
+class Blockchain { constructor() {
+this.chain = [this.createGBlock()];
+}
+
+createGBlock() {
+return new Block(0, Date.now(), 3, '');
+};
+
+getCBlock() {
+return this.chain[this.chain.length - 1];
+}
+
+addBlock(b) {
+b.ph = this.getCBlock().h;
+b.h = b.callHash(); this.chain.push(b);
+}
+}
+
+module.exports.Block = Block; module.exports.Blockchain = Blockchain;
+Filename: test.js
+const{Block,Blockchain} = require("./prime"); let sm = new Blockchain();
+
+ sm.addBlock(new Block(1, Date.now(), 24)); sm.addBlock(new Block(2, Date.now(), 67)); console.log(JSON.stringify(sm, null, 3));
+
+Question 03 - Demonstrating a Blockchain Program to test whether a number is a KrishnaMurthy Number or not.
+
+Filename: krishnamurthy.js
+const c = require('crypto');
+
+class Block {
+constructor(i, t, n, ph = '') { this.i = i;
+this.t = t; this.n = n; this.ph = ph;
+this.km = this.checkKm(n); this.h = this.callHash();
+};
+
+callHash() {
+return c.createHash('sha256').update(this.i + this.t + this.prime + this.ph).digest("hex");
+}
+
+calFact(n){
+let fact = 1; while (n != 0){
+fact *= n; n--
+}
+return fact;
+}
+
+checkKm(n){ let sum = 0; let temp = n;
+while(temp != 0){
+sum = sum + this.calFact(temp%10); temp = parseInt(temp/10);
+}
+
+return sum == n;
+}
+};
+
+class Blockchain { constructor() {
+this.chain = [this.createGBlock()];
+}
+
+createGBlock() {
+return new Block(0, Date.now(), 0, '');
+};
+
+getCBlock() {
+return this.chain[this.chain.length - 1];
+}
+
+addBlock(b) {
+b.ph = this.getCBlock().h;
+b.h = b.callHash(); this.chain.push(b);
+}
+}
+
+module.exports.Block = Block; module.exports.Blockchain = Blockchain;
+Filename: test.js
+const{Block,Blockchain} = require("./krishnamurthy"); let sm = new Blockchain();
+
+ sm.addBlock(new Block(1, Date.now(), 145)); sm.addBlock(new Block(2, Date.now(), 67)); console.log(JSON.stringify(sm, null, 3));
+
+Practical 02: Blockchain Programs II
+
+Question 01 - Demonstration of a Blockchain for identifying if a number is an Armstrong Number or not.
+
+Filename: armStrong.js
+const c = require('crypto');
+
+class Block {
+constructor(i, t, num, ph = '') { this.i = i;
+this.t = t; this.num = num; this.ph = ph;
+this.armStrong = this.checkArmStrong(); this.h = this.callHash();
+};
+callHash() {
+return c.createHash('sha256').update(this.i + this.t + this.num + this.armStrong + this.ph).digest('hex');
+};
+checkArmStrong() { let n = this.num; let counter = 0;
+let armStrongLength = String(n).length; while (n != 0) {
+let re = n % 10;
+counter = counter + Math.pow(re, armStrongLength); n = Math.floor(n / 10);
+}
+n = counter;
+if (n === this.num) return true;
+else
+return false;
+};
+};
+class BlockChain { constructor() {
+this.chain = [this.createGBlock()];
+};
+addBlock(b) {
+b.ph = this.getCBlock().h;
+b.h = b.callHash(); if (b.armStrong) {
+this.chain.push(b);
+};
+};
+createGBlock() {
+return new Block(0, Date.now(), 3, '');
+};
+getCBlock() {
+return this.chain[this.chain.length - 1];
+};
+validateBlock() {
+for (let i = 1; i < this.chain.length; i++) {
+if (this.chain[i].ph != this.chain[i - 1].h) { return false;
+};
+};
+return true;
+};
+};
+module.exports.Block = Block; module.exports.BlockChain = BlockChain;
+Filename: test.js
+const{ Block, BlockChain } = require("./armstrong"); let sm = new BlockChain();
+
+ sm.addBlock(new Block(1, Date.now(), 145)); sm.addBlock(new Block(2, Date.now(), 45)); sm.addBlock(new Block(3, Date.now(), 153)); sm.addBlock(new Block(4, Date.now(), 0)); console.log(JSON.stringify(sm, null, 3));
+console.log(JSON.stringify('Validation: ' + sm.validateBlock()));
+
+Question 02 - Demonstrate a Blockchain to identify if the given number is a Happy Number or not.
+
+Filename: happyNumber.js
+const c = require('crypto');
+
+class Block {
+constructor(i, t, n, ph = '') { this.i = i;
+this.t = t; this.ph = ph; this.n = n;
+this.H = this.checkHappyNumber(n); this.h = this.calHash();
+};
+calHash() {
+return c.createHash('sha256').update(this.i + this.t + this.H
++ this.ph).digest("hex");
+}
+};
+checkHappyNumber(n) {
+let seen = new Set();
+while (n !== 1 && !seen.has(n)) { seen.add(n);
+n = this.sumOfSquares(n);
+};
+if (n === 1) {
+return "Happy Number";
+} else {
+return "Not a Happy Number";
+};
+};
+sumOfSquares(n){ let sum = 0; while(n > 0) {
+let digit = n % 10; sum += digit * digit;
+n = Math.floor(n / 10);
+};
+return sum;
+};
+};
+class Blockchain { constructor() {
+this.chain = [this.createGBlock()];
+};
+
+createGBlock() {
+return new Block(0, Date.now(), 0, '');
+};
+
+getCBlock() {
+return this.chain[this.chain.length - 1];
+};
+
+addBlock(b) {
+b.ph = this.getCBlock().h;
+b.h = b.calHash(); this.chain.push(b);
+};
+}
+
+module.exports.Block = Block; module.exports.Blockchain = Blockchain;
+Filename: test.js
+const { Block, Blockchain } = require("./happyNumber"); let sm = new Blockchain();
+
+ sm.addBlock(new Block(1, Date.now(), 24)); sm.addBlock(new Block(2, Date.now(), 13)); console.log(JSON.stringify(sm, null, 3));
+
+Question 03 - Demonstrate a Blockchain to identify if the given number is Kaprekar’s Number or not.
+
+Filename: kaprekar.js
+const c = require('crypto');
+
+class Block {
+constructor(i, t, n, ph = '') { this.i = i;
+this.t = t; this.n = n; this.ph = ph;
+this.kaprekar = this.checkKaprekar(); this.h = this.callHash();
+};
+callHash() {
+return c.createHash('sha256').update(this.i + this.t + this.num + this.ph + this.kaprekar).digest('hex');
+};
+checkKaprekar(n) { let num = this.n;
+if (num === 1) return true; if (num <= 0) return false;
+const square = (num * num).toString(); const len = square.length;
+for (let i = 1; i < len; i++) {
+const left = parseInt(square.slice(0, i)) || 0; // left
+const right = parseInt(square.slice(i)) || 0; // right if (left + right === num) {
+return true;
+}
+}
+return false;
+};
+};
+
+class BlockChain { constructor() {
+this.chain = [this.createGBlock()];
+};
+createGBlock() {
+return new Block(0, Date.now(), 2, '');
+};
+getCBlock() {
+return this.chain[this.chain.length - 1];
+};
+addBlock(b) {
+b.ph = this.getCBlock().h;
+b.h = b.callHash(); if (b.kaprekar) {
+this.chain.push(b);
+};
+};
+validateBlock() {
+for (let i = 1; i < this.chain.length; i++) {
+if (this.chain[i].ph != this.chain[i - 1].h) { return false;
+};
+};
+return true;
+};
+};
+module.exports.Block = Block; module.exports.BlockChain = BlockChain;
+Filename: test.js
+const{ Block, BlockChain } = require("./kaprekar"); let sm = new BlockChain();
+
+ sm.addBlock(new Block(1, Date.now(), 145)); sm.addBlock(new Block(2, Date.now(), 45)); sm.addBlock(new Block(3, Date.now(), 9)); sm.addBlock(new Block(4, Date.now(), 0)); console.log(JSON.stringify(sm, null, 3));
+console.log(JSON.stringify('Validation: ' + sm.validateBlock()));
+
+Practical 03: BlockChain Programs
+
+Question 01: Demonstrate a BlockChain Program to find Anagrams from a given input of words.
+
+Filename: anagrams.py
+import hashlib import datetime
+
+class Block:
+def 	init	(self, i, w1, w2, r, ph):
+self.i = i
+self.t = str(datetime.datetime.now()) self.w1 = w1
+self.w2 = w2 self.r = r self.ph = ph
+self.h = self.calHash()
+def calHash(self):
+data = (str(self.i) + self.t + self.w1 + self.w2 + str(self.r) + self.ph)
+return hashlib.sha256(data.encode()).hexdigest()
+class Blockchain:
+def 		init	(self): self.chain = [] self.createGenesisBlock()
+def createGenesisBlock(self):
+genesis = Block(0, "Genesis", "Genesis", True, "0") self.chain.append(genesis)
+def addBlock(self, w1, w2): s1 = w1.lower()
+s2 = w2.lower()
+r = sorted(s1) == sorted(s2) ph = self.chain[-1].h
+b = Block(len(self.chain), w1, w2, r, ph) self.chain.append(b)
+def display(self):
+ for b in self.chain:
+print("=" * 50) print("Block:", b.i)
+print("Timestamp:", b.t)
+print("Word 1:", b.w1)
+print("Word 2:", b.w2)
+print("Anagram:", b.r)
+print("Hash:", b.h) print("Previous Hash:", b.ph)
+
+def isValid(self):
+for i in range(1, len(self.chain)): current_block = self.chain[i] previous_block = self.chain[i - 1]
+if current_block.h != current_block.calHash(): return False
+if current_block.ph != previous_block.h: return False
+return True
+
+p = Blockchain() p.addBlock("bread", "apple") p.addBlock("welcome", "guest") p.addBlock("listen", "silent") print("=" * 50)
+print("Is the blockchain valid?:", p.isValid()) p.display()
+
+Question 02: Demonstrate a BlockChain to keep a record of transactions.
+
+Filename: transactions.py
+pb -= m
+ph = self.chain[-1].h
+b = Block(len(self.chain), op, pb, ph)
+self.chain.append(b)
+def display(self):
+
+for b in self.chain: print("=" * 50) print("Block:", b.i)
+print("Timestamp:", b.t)
+print("Balance:", b.bal) print("Operation:", b.op) print("Hash:", b.h) print("Previous Hash:", b.ph)
+def validate(self):
+for i in range(1, len(self.chain)):
+if self.chain[i].ph != self.chain[i-1].h: return False
+if self.chain[i].h != self.chain[i].calHash(): return False
+return True p = Blockchain()
+p.addBlock("d", 100)
+p.addBlock("w", 200) p.display()
+if p.validate(): print("Blockchain is valid.")
+else:
+print("Blockchain is not valid.")
+
+Question 03: Demonstrate a BlockChain to check the attendance of students.
+
+Filename: attendance.py
+import hashlib import datetime
+class Block:
+def 	init	(self, i, n, a, ph): self.i = i
+self.t = str(datetime.datetime.now()) self.n = n
+self.a = a self.ph = ph
+self.h = self.calHash()
+def calHash(self):
+data = (str(self.i) + self.t + self.n + str(self.a) +
+self.ph)
+return hashlib.sha256(data.encode()).hexdigest()
+class Blockchain:
+def 	init	(self): self.chain = [] self.createGenesisBlock()
+def createGenesisBlock(self):
+genesis = Block(0, "Genesis", "p", "0") self.chain.append(genesis)
+def addBlock(self, n, status): ph = self.chain[-1].h
+b = Block(len(self.chain), n, status, ph) self.chain.append(b)
+def display(self):
+ for b in self.chain:
+print("=" * 50) print("Block:", b.i)
+print("Timestamp:", b.t) print("Student Name: ", b.n) print("Status: ", b.a)
+print("Hash:", b.h) print("Previous Hash:", b.ph)
+
+def isValid(self):
+for i in range(1, len(self.chain)): current_block = self.chain[i] previous_block = self.chain[i - 1]
+
+if current_block.h != current_block.calHash(): return False
+
+if current_block.ph != previous_block.h: return False
+return True
+
+p = Blockchain() p.addBlock("Student", "p")
+p.addBlock("Parth", "a") print("=" * 50)
+print("Is the blockchain valid?:", p.isValid()) p.display()
+
+Practical 04: Smart Contracts
+
+Question 01: Demonstrate a Smart Contract to print a Simple Message (Example “Hello World”)
+
+Filename: first.sol
+// SPDX-License-Identifier: MIT pragma solidity ^0.8.20;
+
+contract MessageContract {
+string public ms = "Hello MSc CS Students";
+
+function setMessage(string memory nm) public { ms = nm;
+}
+}
+
+Question 02: Demonstrate a Smart Contract for performing Addition Operation of Two Numbers.
+
+Filename: Addition.sol
+// SPDX-License-Identifier: MIT pragma solidity ^0.8.6;
+
+contract AdditionContract {
+
+function AddNumber(int num01,int num02) public pure returns(int)
+{
+return num01 + num02;
+}
+}
+
+Question 03: Demonstrate a Smart Contract for performing Arithmetic Operations on Two Numbers.
+
+Filename: Operations.sol
+// SPDX-License-Identifier: MIT pragma solidity ^0.8.20;
+
+contract AdditionContract {
+
+function AddNumbers(int n1,int n2) public pure returns(int) { return n1 + n2;
+}
+
+function SubNumbers(int n1,int n2) public pure returns(int) { return n1 - n2;
+}
+
+function MultiplyNumbers(int n1,int n2) public pure returns(int)
+{
+return n1 * n2;
+}
+
+function DivideNumbers(int n1,int n2) public pure returns(int) { return n1 / n2;
+}
+}
+
+Question 04: Demonstrate a Smart Contract for finding if a number is Palindrone Number or not.
+
+Filename: Palindrone.sol
+// SPDX-License-Identifier: MIT pragma solidity ^0.8.6;
+
+contract Palindrone {
+
+function IsPalindrone(int num) public pure returns (bool) { if (num < 10) {
+return true;
+}
+
+int temporary = num; int reversed = 0;
+
+while (num > 0) {
+int remainder = num % 10;
+reversed = (reversed * 10) + remainder; num = num / 10;
+}
+
+return temporary == reversed;
+}
+}
+
+Question 05: Demonstrate a Smart Contract. Create an array to store student names and make a function to get student count and all their names.
+
+Filename: StudentCount.sol
+// SPDX-License-Identifier: MIT pragma solidity ^0.8.6;
+
+contract StudentCount {
+
+string[] public StudentArray;
+
+function addStudent(string memory name) public { StudentArray.push(name);
+}
+
+function getCount() public view returns(uint) { return StudentArray.length;
+}
+}
+
+Question 06: Demonstrate a Smart Contract to find mean, median, mode from a given array of numbers.
+
+Filename: Stats.sol
+// SPDX-License-Identifier: MIT pragma solidity ^0.8.0;
+contract Statistics {
+int[] public numbers;
+
+function AddNumber(int num) public { numbers.push(num);
+}
+
+// Calculating the Mean
+function mean() public view returns(int) { require(numbers.length > 0, "Array is empty");
+
+int sum = 0;
+for (uint i = 0; i < numbers.length; i++) { sum += numbers[i];
+}
+return sum / int(numbers.length);
+}
+
+// Calculating the Median
+function median() public view returns(int) { require(numbers.length > 0, "Array is Empty!");
+
+int[] memory arr = new int[](numbers.length);
+
+// Copying the original array into a temporary one
+for (uint i = 0; i < numbers.length; i++) { arr[i] = numbers[i];
+}
+
+// Sorting the new array
+for (uint i = 0; i < arr.length; i++) {
+for (uint j = i + 1; j < arr.length; j++) {
+if (arr[i] > arr[j]) { int temp = arr[j]; arr[i] = arr[j]; arr[j] = temp;
+}
+}
+}
+
+uint n = arr.length;
+
+if (n % 2 == 0) {
+return (arr[n/2 - 1] + arr[n/2]) / 2;
+}
+else {
+return arr[n/2];
+}
+// Calculating the Mode
+function mode() public view returns(int) {
+require(numbers.length > 0, "Array is empty");
+int ModeValue = numbers[0];
+uint MaxCount = 1;
+for (uint i = 0; i < numbers.length; i++) {
+uint count = 1;
+for (uint j = i + 1; j < numbers.length; j++) {
+if (numbers[i] == numbers[j]) {
+count++;
+if (count > MaxCount) {
+MaxCount = count;
+ModeValue = numbers[i];
+return ModeValue;
+
+Practical 05: Structures in Solidity
+
+Question 01: Demonstrate a Structure for Student’s Information in Solidity Programming.
+
+Filename: stud.sol
+// SPDX-License-Identifier: MIT pragma solidity ^0.8.6;
+
+contract studInfo { struct student {
+int id; string name;
+string adress; int age; uint[] marks;
+} student s;
+
+function setValue(int i, string memory n, string memory a, int ag, uint[] memory m) public {
+s.id = i; s.name = n; s.adress = a; s.age = ag; s.marks = m;
+}
+
+function getName() public view returns (string memory) { return s.name;
+}
+
+function getGrade() public view returns (string memory) { uint sum = 0;
+for (uint i = 0; i < s.marks.length; i++) { sum += uint(s.marks[i]);
+}
+uint average = sum / s.marks.length; if (average >= 90) return "A+";
+else if (average >= 80) return "A"; else if (average >= 70) return "B"; else if (average >= 60) return "C"; else if (average >= 50) return "D"; else return "F";
+}
+}
+
+Question 02: Demonstrate a Structure for Storing Information of Multiple Students using Solidity Programming.
+
+Filename: studs.sol
+// SPDX-License-Identifier: MIT pragma solidity ^0.8.6;
+contract StudentRegistry { struct StudentRecord {
+int studentId; string fullName; string homeAddress; int yearsOld; uint[] testScores;
+} StudentRecord[] enrolledStudents;
+function enrollNewStudent(int sid, string memory fName, string memory addr, int yrs, uint[] memory grds) public {
+enrolledStudents.push(StudentRecord(sid, fName, addr, yrs,
+grds));
+}
+function getEnrollmentCount() public view returns (uint) { return enrolledStudents.length;
+}
+function getAllRecords() public view returns (StudentRecord[] memory) {
+return enrolledStudents;
+}
+function retrieveClassGrades() public view returns (string[] memory names, string[] memory letters) {
+names = new string[](enrolledStudents.length); letters = new string[](enrolledStudents.length);
+for (uint i = 0; i < enrolledStudents.length; i++) { names[i] = enrolledStudents[i].fullName;
+uint pointSum = 0;
+for	(uint	j	=	0;	j	< enrolledStudents[i].testScores.length; j++) {
+pointSum += enrolledStudents[i].testScores[j];
+}
+
+uint	avg	=	pointSum	/
+enrolledStudents[i].testScores.length;
+
+if (avg >= 90) {
+letters[i] = "A+";
+}
+else if (avg >= 80) { letters[i] = "A";
+}
+else if (avg >= 70) { letters[i] = "B";
+}
+else if (avg >= 60) { letters[i] = "C";
+}
+else if (avg >= 50) { letters[i] = "D";
+}
+else letters[i] = "F";
+}
+}
+}
+
+Question 03: Demonstrate a Structure for Deposit, Withdrawal and Transactions of a User Account.
+
+Filename: userTransactions.sol
+// SPDX-License-Identifier: MIT pragma solidity ^0.8.7;
+
+contract bankAccount {
+
+struct User {
+int accNo; string name; uint balance;
+}
+
+User u;
+
+// Creation of the Bank Account
+function createAccount(int acc,string memory n,uint bal) public { u.accNo = acc;
+u.name = n; u.balance = bal;
+}
+
+// Deposition of Money
+function deposit(uint amount) public { u.balance += amount;
+}
+
+// Withdrawal of Money
+function withdraw(uint amount) public returns (string memory) {
+// Test case when user withdraws more amount than the existing balance
+if (u.balance >= amount) { u.balance -= amount;
+return "Transaction Successful!";
+}
+else {
+return "Insufficient Balance";
+}
+}
+
+// Checking the Account Balance
+function getBalance() public view returns (uint) { return u.balance;
+}
+
+}
+
+Question 04: Demonstrate whether a given number is a ‘Perfect Number’ or not in Solidity Programming.
+
+Filename: perfectNumber.sol
+// SPDX-License-Identifier: MIT pragma solidity ^0.8.6;
+
+contract perfectNumber {
+// Function to verify perfect number status
+
+function isPerfect(uint num) public pure returns (string memory)
+{
+if (num <= 1) {
+return "Please enter values above one!";
+}
+
+uint sum = 1;
+
+// Locate all valid divisors
+for (uint i = 2; i <= num / 2; i++) { if (num % i == 0) {
+sum += i;
+}
+}
+
+if (sum == num) {
+return "The provided integer is Perfect.";
+}
+else {
+return "The provided integer is NOT Perfect.";
+}
+}
+}
+
+Practical 06: Mapping in Solidity Programming
+
+Question 01: Using mapping in Solidity Programming, develop a full fledged Voting System
+
+Filename: votingSystem.sol
+// SPDX-License-Identifier: MIT pragma solidity ^0.8.7;
+
+contract voting {
+
+mapping(string => uint) public voteCount; //Stores the number of votes each candidate has
+mapping(address => bool) public voters; // Keeps a track of whather a candidate (address) has already been voted {true or false}
+
+string[] public candidateName; //Stores the list of all the candidate names
+
+constructor(string[] memory cdn) {
+candidateName = cdn; // Initializing with candidate names
+}
+function vote(string memory c) public { require(!voters[msg.sender], 'You have already voted!'); //
+Checking if the voter have already voted prior
+bool candidateExists = false; // Variable to check whether the candidate exist's or not
+for (uint i = 0; i < candidateName.length; i++) { //Looping through all the candidates
+if (keccak256(bytes(c)) == keccak256(bytes(candidateName[i]))) { // Comparing using the Hash Value's instead of Strings
+candidateExists = true; break;
+}
+}
+require(candidateExists, 'Candidate does not exist!'); // Checking if the Candidate Exists in the System
+voteCount[c]++; voters[msg.sender] = true;
+}
+
+function getWinner() public view returns (string memory) { string memory winner; //Stores the current winner
+uint highestVoteCount = 0;
+for (uint i = 0; i < candidateName.length; i++) { // Checking every Candidate
+if (voteCount[candidateName[i]] > highestVoteCount) { highestVoteCount = voteCount[candidateName[i]]; winner = candidateName[i];
+}
+}
+
+return winner;
+}
+}
+
+Question 02: Using mapping in Solidity Programming, develop an Online Quiz System.
+
+Filename: quiz.sol
+// SPDX-License-Identifier: MIT pragma solidity ^0.8.21;
+
+contract Quiz {
+
+struct Question { string Qtext; string[4] O;
+uint8 cO;
+}
+Question[] public q;
+uint public tc; uint public tw;
+event AnswerRes( string Qtext, string ans, bool isc
+);
+function addQ(
+string memory _q, string[4] memory _O, uint8 _cO
+) public {
+require(_cO < 4, "Invalid option");
+q.push(Question(_q, _O, _cO));
+}
+function ansQ(uint i, uint8 sO) public { require(i < q.length, "Invalid question"); require(sO < 4, "Invalid option");
+bool isc = (sO == q[i].cO);
+if (isc) {
+tc++;
+} else {
+tw++;
+}
+emit AnswerRes(q[i].Qtext, q[i].O[sO], isc);
+}
+function getQ(uint i) public view returns ( string memory,
+string[4] memory, uint8
+) {
+require(i < q.length, "Invalid question"); return (q[i].Qtext, q[i].O, q[i].cO);
+}
+
+function getS() public view returns (uint cor, uint wro) { return (tc, tw);
+}
+}
+
+Practical 07: Inheritance in Solidity Programming
+
+Filename: singleInheritance.sol
+// SPDX-License-Identifier: MIT pragma solidity ^0.8.21;
+
+contract Vehicle { string vehicleType;
+string vehicleNumber;
+
+constructor(string memory vtype, string memory num) { vehicleType = vtype;
+vehicleNumber = num;
+}
+
+function display() public view returns (string memory) { return vehicleType;
+}
+}
+
+contract Car is Vehicle { string vehicleColor; string vehicleBrand;
+
+constructor(string memory vtype, string memory num, string memory vcolor, string memory vbrand) Vehicle(vtype, num) {
+vehicleColor = vcolor; vehicleBrand = vbrand;
+}
+
+function displayCar() public view returns (string memory) { return vehicleBrand;
+}
+}
+Filename: multipleInheritance.sol
+// SPDX-License-Identifier: MIT pragma solidity ^0.8.21;
+
+contract studentData {
+
+struct studentStruc { string studentName; string studemtRollNo;
+}
+
+studentStruc public student;
+
+constructor(string memory studentName, string memory studentRollNo) {
+student = studentStruc(studentName, studentRollNo);
+}
+function displayStudent() public view returns (string memory) { return student.studentName;
+}
+
+function displayRollNo() public view returns (string memory) { return student.studemtRollNo;
+}
+}
+
+Practical 08: Working with (Ether) Payable Contracts
+
+Question 01: Depositing and Transferring Payable Ether from One Account to Another
+
+Filename: payableEther.sol
+// SPDX-License-Identifier: MIT pragma solidity ^0.8.0;
+
+contract Payes { uint public b;
+
+function deposit() public payable { b += msg.value;
+}
+
+function transferE(address payable r) public payable { require(address(this).balance >= msg.value, "Insufficient
+Balance");
+r.transfer(msg.value);
+}
+}
+
+Question 02: Demonstrating Banking Transactions (Deposit, Withdraw, Balance and other operations) using Payable Ether in Solidity Programming.
+
+Filename: Bank.sol
+// SPDX-License-Identifier: MIT pragma solidity ^0.8.21;
+contract Bank {
+
+mapping(address => uint) public balance;
+
+// Depositing Ether
+function deposit() public payable { balance[msg.sender] += msg.value;
+}
+
+// Withdrawing Ether
+function withdraw(uint amount) public { require(balance[msg.sender] >= amount, "Insufficient Balance");
+
+balance[msg.sender] -= amount; payable(msg.sender).transfer(amount);
+}
+
+// Transferring Ether to another user
+function transfer(address payable receiver, uint amount) public { require(balance[msg.sender] >= amount, "Insufficient Balance");
+
+balance[msg.sender] -= amount; balance[receiver] += amount;
+}
+
+// Showing Account Balance
+function showBalance() public view returns (uint) {
+return balance[msg.sender];
+}
+
+}
+
+Question 03: Demonstrating a Smart Contract for Student Fee Payment. The Contract should accept fees using a payable function, store the amount paid by each student and allow students to observe their own amount while displaying the total amount of fees collected.
+
+Filename: StudentFees.sol
+// SPDX-License-Identifier: MIT pragma solidity ^0.8.0;
+
+contract StudentFee {
+
+// Storing the amount each student has paid mapping(address => uint) public feesPaid;
+
+// Storing total fees collected uint public totalFees;
+
+// Function for Student paying the fee function payFee() public payable {
+feesPaid[msg.sender] = feesPaid[msg.sender] + msg.value; totalFees = totalFees + msg.value;
+}
+
+// Funtion to enable students to observe their own fees function myFee() public view returns (uint) {
+return feesPaid[msg.sender];
+}
+
+// Function for displaying the total amount of fees paid function totalFeeCollected() public view returns (uint) {
+return totalFees;
+}
+
+Practical 09: Smart Contract for Student Scholarship
+
+Filename: StudentScholarship.sol
+// SPDX-License-Identifier: MIT pragma solidity ^0.8.21;
+
+contract student {
+
+// Creating a Student Struc struct studentDetails {
+uint studentId; string studentName; string studentCourse; uint studentMarks;
+bool scholarshipEligibility;
+}
+
+// Mapping Student Details to Student ID
+mapping (uint => studentDetails) public students;
+
+mapping (uint => bool) public isRegistered; address public owner;
+
+constructor () {
+owner = msg.sender;
+}
+
+modifier onlyOwner() {
+require(msg.sender == owner, "This Action can only be performed by the Owner!");
+_;
+}
+
+// Allowing the owner to add student Details
+function addStudent (uint studentId, string memory studentName, string memory studentCourse, uint studentMarks) public onlyOwner {
+require(!isRegistered[studentId], "Student ID already
+exists!");
+bool eligible = studentMarks >= 60;
+students[studentId] = studentDetails(studentId, studentName, studentCourse, studentMarks, eligible);
+isRegistered[studentId] = true;
+}
+// Displaying student details
+function getStudent(uint studentId) public view returns (uint, string memory, string memory, uint, bool) {
+require(isRegistered[studentId], "Student Record not
+Found!");
+studentDetails memory s = students[studentId];
+return (s.studentId, s.studentName, s.studentCourse, s.studentMarks, s.scholarshipEligibility);
+}
+}
+contract scholarship is student {
+uint public scholarshipAmount = 4;
+mapping (uint => bool) public hasClaimed;
+// Owmer Depositing Funds
+function depositFunds() public payable onlyOwner {}
+// Students Claiming Scholarship
+function claimScholarship(uint studentId) public { require(isRegistered[studentId], "Student Record not
+found!");
+require(students[studentId].scholarshipEligibility, "Student Not Eligible!");
+require(!hasClaimed[studentId], " Scholarship Already
+Claimed!");
+require(address(this).balance >= scholarshipAmount, "Insufficient Funds");
+
+hasClaimed[studentId] = true; payable(msg.sender).transfer(scholarshipAmount);
+}
+
+// Displaying Total Scholarship Funds
+function getTotalFunds() public view returns (uint) { return address(this).balance;
+}
+
+}
+
+Practical 10: Creating a DApp
+
+Practical 11: DApp for Bank
+
+Filename: bank.sol
+:// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.21;
+
+contract Bank {
+mapping(address => uint) public balance;
+
+function deposit() public payable { balance[msg.sender] += msg.value;
+}
+
+function withdraw(uint amount) public { require(balance[msg.sender] >= amount, "Insufficient
+Balance");
+balance[msg.sender] -= amount; payable(msg.sender).transfer(amount);
+}
+
+function transfer(address payable receiver, uint amount) public { require(balance[msg.sender] >= amount, "Insufficient
+Balance");
+balance[msg.sender] -= amount; balance[receiver] += amount;
+}
+function showBalance() public view returns (uint) { return balance[msg.sender];
+}
+}
+Step 03: Now create a filed titled “1_deploy.js” in migrations directory
+Filename: migrations/1_deploy.js
+const Bank = artifacts.require("bank"); module.exports = function (deployer) {
+deployer.deploy(Bank);
+}
+Step 04: Making Changes in the Truffle Configuration File
+Filename: truffle-config.js
+Changes: (your port should be the same as your Ganache RPC Server”
+
+Ensure to match your version in here and in the sol files
+Step 05: Create another directory titled “frontend” and add the two files mentioned below
+Filename: index.html
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Simple Bank DApp</title>
+</head>
+
+<body>
+<h1>Simple Bank</h1>
+
+<button id="connectButton">Connect MetaMask</button>
+
+<p>Account: <span id="account">Not connected</span></p>
+
+<h2>Balance</h2>
+
+<p>
+<span id="balance">0</span> ETH
+</p>
+<button id="refreshButton">Refresh Balance</button>
+<hr>
+<h2>Deposit</h2>
+<input id="depositAmount" type="number" placeholder="ETH amount">
+<button id="depositButton">Deposit</button>
+<hr>
+<h2>Withdraw</h2>
+<input  id="withdrawAmount"  type="number"  placeholder="ETH
+amount">
+<button id="withdrawButton">Withdraw</button>
+<hr>
+<h2>Transfer</h2>
+<input id="receiver" type="text" placeholder="Receiver address">
+<input  id="transferAmount"  type="number"  placeholder="ETH
+amount">
+<button id="transferButton">Transfer</button>
+<p id="status"></p>
+<!-- Web3.js -->
+<script
+src="https://cdn.jsdelivr.net/npm/web3@4.16.0/dist/web3.min.js"></scr ipt>
+<!-- Your JavaScript -->
+<script src="app.js"></script>
+
+</body>
+
+</html>
+Filename: app.js
+Source Code (For, Contract Address and Contract ABI follow next step)
+let web3Instance; let bankContract; let userAccount;
+
+// Put your deployed Bank contract address here
+const BANK_ADDRESS = "0x1410C987Ad456c9c9666183f638cE71e81Df5F67";
+
+// Bank contract ABI const BANK_ABI = [
+{
+"inputs": [
+{
+"internalType": "address", "name": "",
+"type": "address"
+}
+],
+"name": "balance", "outputs": [
+{
+"internalType": "uint256", "name": "",
+"type": "uint256"
+}
+],
+"stateMutability": "view", "type": "function", "constant": true
+},
+{
+"inputs": [],
+"name": "deposit",
+"outputs": [], "stateMutability": "payable", "type": "function", "payable": true
+},
+{
+"inputs": [
+{
+"internalType": "uint256", "name": "amount",
+"type": "uint256"
+}
+],
+"name": "withdraw",
+"outputs": [], "stateMutability": "nonpayable", "type": "function"
+},
+{
+"inputs": [
+{
+"internalType": "address payable", "name": "receiver",
+"type": "address"
+},
+{
+"internalType": "uint256", "name": "amount",
+"type": "uint256"
+}
+],
+"name": "transfer",
+"outputs": [], "stateMutability": "nonpayable", "type": "function"
+},
+{
+"inputs": [],
+"name": "showBalance", "outputs": [
+{
+"internalType": "uint256", "name": "",
+"type": "uint256"
+}
+],
+"stateMutability": "view", "type": "function", "constant": true
+}
+];
+// Connect MetaMask
+async function connect() {
+const accounts = await ethereum.request({ method: "eth_requestAccounts"
+});
+userAccount = accounts[0];
+web3Instance = new Web3(ethereum);
+bankContract = new web3Instance.eth.Contract( BANK_ABI,
+BANK_ADDRESS
+);
+document.getElementById("account").innerText = userAccount;
+getBalance();
+}
+// Show bank balance
+async function getBalance() {
+const balanceVal = await bankContract.methods
+.showBalance()
+.call({ from: userAccount });
+document.getElementById("balance").innerText = web3Instance.utils.fromWei(balanceVal, "ether");
+}
+// Deposit
+async function deposit() {
+const depositValue = document.getElementById("depositAmount").value;
+await bankContract.methods
+.deposit()
+.send({
+from: userAccount,
+value: web3Instance.utils.toWei(depositValue, "ether")
+});
+getBalance();
+document.getElementById("status").innerText = "Deposit successful!";
+}
+// Withdraw
+async function withdraw() {
+const withdrawValue = document.getElementById("withdrawAmount").value;
+await bankContract.methods
+.withdraw(
+web3Instance.utils.toWei(withdrawValue, "ether")
+)
+.send({
+from: userAccount
+});
+getBalance();
+document.getElementById("status").innerText = "Withdrawal successful!";
+}
+// Transfer
+async function transfer() {
+const recipientAddr = document.getElementById("receiver").value;
+const transferValue = document.getElementById("transferAmount").value;
+await bankContract.methods
+.transfer(
+recipientAddr, web3Instance.utils.toWei(transferValue, "ether")
+)
+.send({
+from: userAccount
+});
+getBalance();
+document.getElementById("status").innerText = "Transfer successful!";
+
+}
+
+// Buttons document
+.getElementById("connectButton")
+.onclick = connect;
+
+document
+.getElementById("refreshButton")
+.onclick = getBalance;
+
+document
+.getElementById("depositButton")
+.onclick = deposit;
+
+document
+.getElementById("withdrawButton")
+.onclick = withdraw;
+
+document
+.getElementById("transferButton")
+.onclick = transfer;
+Step 06: Compile the DApp
+Command: truffle compile
+Step 07: Migrate Command (Important Step)
+Command: truffle migrate –network development
+Step 08: Copy the Contract Address for adding in app.js
+For Contract ABI, navigate to build>contracts and find the JSON file
+Copy the Entire ABI Content and replace it in app.js File
+Complete app.js File
+Step 09: Now navigate to index.html and select “Live Server” to Run the DApp
+Final Output
+Connecting Metamask
+Depositing Ethereum
+Metamask asks for verification
+Withdrawing Ethereum
+Metamask again asks for Confirmation
+Transferring Funds from One Wallet to Another
+Initially Copying the address of ANOTHER user
+Entering the Address and the Amount
+Metamask asks for Confirmation
+Ensuring all the transactions took place by verifying it on Metamask and Ganache
+Metamask Balance:
+Ganache Balance
+
+Practical 12: Decentralized Application for Prime Number
+
+Filename: prime.sol
+//SPDX-License-Identifier: MIT pragma solidity ^0.8.21;
+contract isPrime {
+function isPrimeNumber(uint num) public pure returns (string memory) {
+if (num <= 1) {
+return "Number is Neither Prime nor Composite";
+}
+for (uint i = 2; i*i <= num; i++ ) { if (num % i == 0) {
+return "Number is Not Prime";
+}
+}
+return "Number is a Prime Number";
+}
+}
+Step 05: Compile the Contract
+Command: truffle compile
+Step 06: Navigate to truffle-config.js and edit the following lines
+Filename: truffle-config.js
+Step 07: Create a frontend folder and add two files in it: index.html and app.js
+Filename: /frontend/index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Check Prime </title>
+</head>
+<body>
+<input type="number" id="num" placeholder="Enter any Number"/><br/>
+<button onclick="isPrime()">isPrime</button>
+<h1> Final Output: <span id="result"></span></h1>
+<script
+src="https://cdn.jsdelivr.net/npm/web3@4.16.0/dist/web3.min.js "></script>
+<script src="app.js"></script>
+</body>
+</html>
+Filename: /frontend/app.js
+let web3; let contract;
+
+const contractAddress = "0x3efF2A5fEDA44898Ba2ddAA960dfD366aBaECc1d";
+
+const contractABI =[
+{
+"inputs": [
+{
+"internalType": "uint256", "name": "num",
+"type": "uint256"
+}
+],
+"name": "isPrimeNumber", "outputs": [
+{
+"internalType": "string", "name": "",
+"type": "string"
+}
+],
+"stateMutability": "pure", "type": "function", "constant": true
+}
+]
+async function isPrime() { try {
+if (typeof window.ethereum === "undefined") { alert("Please install MetaMask.");
+return;
+}
+
+await window.ethereum.request({ method: "eth_requestAccounts"
+});
+web3 = new Web3(window.ethereum); contract = new web3.eth.Contract(
+contractABI, contractAddress
+);
+const num = document.getElementById("num").value; if (num === "") {
+alert("Please enter any number!"); return;
+}
+
+const result = await contract.methods
+.isPrimeNumber(num)
+.call(); document.getElementById("result").innerText = result;
+} catch (error) {
+console.error(error); alert("Error: " + error.message);
+}
+}
+Step 08: Execute the truffle migrate command
+Command: truffle migrate –reset –network development
+Copy the Contract Address from here and add it in the app.js File
+Step 09: After migration, “build” folder will be created. Navigate to there and copy the contract abi from the JSON File
+Filename: /build/isPrime.json
+Step 10: Install Live Server Extension in VS Code if not existing
+Step 11: Execute the index.html file from frontend using the Live Server
+Step 12: Enter a Composite Number (for ex. 44). Metamask will ask for confirmation for the first operation, select yes and continue.
+
+Practical 12 (Class): Decentralized App for Voting System
+
+Filename: voting.sol
+// SPDX-License-Identifier: MIT pragma solidity ^0.8.20;
+
+contract Voting { struct Candidate {
+uint256 id; string name;
+uint256 voteCount;
+}
+
+address public owner;
+uint256 public candidateCount;
+
+mapping(uint256 => Candidate) public candidates; mapping(address => bool) public hasVoted;
+event CandidateAdded(uint256 indexed candidateId, string name); event VoteCast(
+address indexed voter, uint256 indexed candidateId
+);
+
+modifier onlyOwner() {
+require(msg.sender == owner, "Only owner can perform this action");
+_;
+}
+constructor() {
+owner = msg.sender;
+}
+
+function addCandidate(string memory _name) public onlyOwner { require(bytes(_name).length > 0, "Candidate name cannot be
+empty");
+candidateCount++; candidates[candidateCount] = Candidate({
+id: candidateCount, name: _name, voteCount: 0
+});
+
+emit CandidateAdded(candidateCount, _name);
+}
+
+function vote(uint256 _candidateId) public { require(!hasVoted[msg.sender], "You have already voted");
+
+require(
+_candidateId > 0 && _candidateId <= candidateCount, "Invalid candidate"
+);
+
+hasVoted[msg.sender] = true; candidates[_candidateId].voteCount++;
+emit VoteCast(msg.sender, _candidateId);
+}
+
+function getCandidate(uint256 _candidateId) public
+view returns (
+uint256 id,
+string memory name, uint256 voteCount
+)
+{
+require(
+_candidateId > 0 && _candidateId <= candidateCount, "Invalid candidate"
+);
+Candidate memory candidate = candidates[_candidateId]; return (
+candidate.id, candidate.name, candidate.voteCount
+);
+}
+}
+Also Create the Deployment File
+Filename: 1_deploy.js
+const Voting = artifacts.require("Voting");
+
+module.exports = function (deployer) { deployer.deploy(Voting);
+};
+Step 05: Compile the Contract
+Command: truffle compile
+Step 06: Navigate to truffle-config.js and edit the following lines
+Filename: truffle-config.js
+Step 07: Create a frontend folder and add two files in it: index.html and app.js
+Filename: /frontend/index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Blockchain Voting System</title>
+
+<!-- Web3.js -->
+<script src="https://cdn.jsdelivr.net/npm/web3@1.10.4/dist/web3.min.js"></s cript>
+
+<style> body {
+font-family: Arial, sans-serif; background-color: #f4f6f8; margin: 0;
+padding: 0;
+}
+
+.container { width: 90%;
+max-width: 800px; margin: 50px auto; background: white; padding: 30px; border-radius: 10px;
+box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+text-align: center; color: #333;
+}
+
+h2 {
+color: #444;
+margin-top: 30px;
+}
+
+button {
+background-color: #4CAF50; color: white;
+border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer;
+font-size: 15px;
+}
+
+button:hover {
+background-color: #45a049;
+}
+
+input {
+width: 65%; padding: 12px;
+border: 1px solid #ccc; border-radius: 5px; font-size: 15px;
+}
+
+#account { color: #555;
+word-break: break-all;
+}
+
+.candidate {
+border: 1px solid #ddd; padding: 20px;
+margin: 15px 0; border-radius: 8px;
+background-color: #fafafa;
+}
+.candidate h3 { margin-top: 0;
+color: #333;
+}
+
+.vote-count {
+font-size: 18px; font-weight: bold; color: #2196F3;
+}
+
+#status {
+margin-top: 20px; font-weight: bold;
+}
+
+hr {
+margin: 30px 0;
+border: 0;
+border-top: 1px solid #ddd;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>Blockchain Voting System</h1>
+
+<button id="connectButton"> Connect MetaMask
+</button>
+
+<p id="account"> Wallet not connected
+</p>
+
+<hr>
+
+<h2>Candidates</h2>
+
+<div id="candidateList"> Loading candidates...
+</div>
+
+<hr>
+<h2>Add Candidate</h2>
+
+<input
+type="text" id="candidateName"
+placeholder="Enter candidate name"
+>
+
+<button id="addCandidateButton"> Add Candidate
+</button>
+
+<p id="status"></p>
+
+</div>
+
+<script src="app.js"></script>
+
+</body>
+
+</html>
+Filename: /frontend/app.js
+let web3;
+let votingContract; let currentAccount;
+
+// Replace this ABI with the ABI generated by Truffle const contractABI = [
+{
+"inputs": [
+{
+"internalType": "string", "name": "_name",
+"type": "string"
+}
+],
+"name": "addCandidate", "outputs": [],
+"stateMutability": "nonpayable", "type": "function"
+},
+{
+"inputs": [],
+"name": "candidateCount", "outputs": [
+{
+"internalType": "uint256", "name": "",
+"type": "uint256"
+}
+],
+"stateMutability": "view", "type": "function"
+},
+{
+"inputs": [
+{
+"internalType": "uint256", "name": "_candidateId", "type": "uint256"
+}
+],
+"name": "candidates", "outputs": [
+{
+"internalType": "uint256", "name": "id",
+"type": "uint256"
+},
+{
+"internalType": "string", "name": "name",
+"type": "string"
+},
+{
+"internalType": "uint256", "name": "voteCount",
+"type": "uint256"
+}
+],
+"stateMutability": "view", "type": "function"
+},
+{
+"inputs": [],
+"name": "owner", "outputs": [
+{
+"internalType": "address", "name": "",
+"type": "address"
+}
+],
+"stateMutability": "view", "type": "function"
+},
+{
+"inputs": [
+{
+"internalType": "uint256", "name": "_candidateId", "type": "uint256"
+}
+],
+"name": "vote",
+"outputs": [],
+"stateMutability": "nonpayable", "type": "function"
+},
+{
+"inputs": [
+{
+"internalType": "address", "name": "",
+"type": "address"
+}
+],
+"name": "hasVoted", "outputs": [
+{
+"internalType": "bool", "name": "",
+"type": "bool"
+}
+],
+"stateMutability": "view", "type": "function"
+}
+];
+
+// IMPORTANT:
+// After deploying, replace this address with the address
+// shown in build/contracts/Voting.json
+const contractAddress = "YOUR_CONTRACT_ADDRESS";
+
+window.addEventListener("load", async () => {
+if (typeof window.ethereum === "undefined") { setStatus("Please install MetaMask."); return;
+}
+web3 = new Web3(window.ethereum); document
+.getElementById("connectButton")
+.addEventListener("click", connectWallet);
+
+document
+.getElementById("addCandidateButton")
+.addEventListener("click", addCandidate);
+await connectWallet();
+});
+
+async function connectWallet() { try {
+const accounts = await window.ethereum.request({ method: "eth_requestAccounts"
+});
+currentAccount = accounts[0]; document.getElementById("account").innerText =
+"Connected: " + currentAccount;
+
+votingContract = new web3.eth.Contract( contractABI,
+contractAddress
+);
+
+await loadCandidates(); await checkOwner();
+} catch (error) { console.error(error);
+setStatus("Failed to connect MetaMask.");
+}
+}
+
+async function loadCandidates() { try {
+const count = await votingContract.methods
+.candidateCount()
+.call();
+
+const candidateList = document.getElementById("candidateList");
+
+candidateList.innerHTML = ""; if (count == 0) {
+candidateList.innerHTML =
+"<p>No candidates available.</p>";
+
+return;
+}
+for (let i = 1; i <= count; i++) { const candidate =
+await votingContract.methods
+.candidates(i)
+.call();
+
+const candidateDiv = document.createElement("div");
+candidateDiv.className = "candidate"; candidateDiv.innerHTML = `
+<h3>${candidate.name}</h3>
+
+<p>
+Candidate ID:
+${candidate.id}
+</p>
+
+<p class="vote-count">
+Votes: ${candidate.voteCount}
+</p>
+
+<button onclick="vote(${candidate.id})">
+Vote
+</button>
+`;
+
+candidateList.appendChild(candidateDiv);
+}
+} catch (error) { console.error(error); setStatus(
+"Could not load candidates."
+);
+}
+}
+
+async function vote(candidateId) { if (!currentAccount) {
+setStatus(
+"Please connect MetaMask first."
+);
+
+return;
+}
+
+try {
+setStatus("Waiting for MetaMask confirmation..."); await votingContract.methods
+.vote(candidateId)
+.send({
+from: currentAccount
+});
+
+setStatus(
+"Vote successfully recorded!"
+);
+
+await loadCandidates();
+} catch (error) { console.error(error); if (
+error.message && error.message.includes("already voted")
+) {
+
+setStatus(
+"You have already voted."
+);
+
+} else {
+setStatus(
+"Transaction failed or was rejected."
+);
+}
+}
+}
+
+async function addCandidate() { if (!currentAccount) {
+setStatus(
+"Please connect MetaMask first."
+);
+
+return;
+}
+const name = document.getElementById("candidateName")
+.value
+.trim();
+if (!name) { setStatus(
+"Please enter a candidate name."
+);
+
+return;
+}
+try {
+
+const owner =
+await votingContract.methods
+.owner()
+.call();
+
+if (
+owner.toLowerCase() !== currentAccount.toLowerCase()
+) {
+
+setStatus(
+"Only the contract owner can add candidates."
+);
+
+return;
+}
+
+setStatus(
+"Waiting for MetaMask confirmation..."
+);
+
+await votingContract.methods
+.addCandidate(name)
+.send({
+from: currentAccount
+});
+
+document.getElementById("candidateName")
+.value = "";
+
+setStatus(
+"Candidate added successfully!"
+);
+
+await loadCandidates();
+} catch (error) { console.error(error); setStatus(
+"Could not add candidate."
+);
+}
+}
+
+async function checkOwner() { try {
+const owner =
+await votingContract.methods
+.owner()
+.call();
+
+if (
+owner.toLowerCase() === currentAccount.toLowerCase()
+) {
+
+console.log(
+"Connected account is the contract owner."
+);
+
+} else {
+
+console.log(
+"Connected account is not the contract owner."
+);
+}
+} catch (error) { console.error(error);
+}
+}
+
+function setStatus(message) { document.getElementById("status")
+.innerText = message;
+}
+
+if (window.ethereum) { window.ethereum.on(
+"accountsChanged",
+async function (accounts) {
+if (accounts.length === 0) { currentAccount = null; document.getElementById("account")
+.innerText =
+"Wallet disconnected";
+
+} else {
+currentAccount = accounts[0]; document.getElementById("account")
+.innerText =
+"Connected: " + currentAccount;
+await loadCandidates();
+}
+}
+);
+}
+Step 08: Execute the truffle migrate command
+Command: truffle migrate –reset –network development
+Copy the Contract Address from here and add it in the app.js File
+Step 09: After migration, “build” folder will be created. Navigate to there and copy the contract abi from the JSON File
+Filename: /build/isPrime.json
+Step 10: Install Live Server Extension in VS Code if not existing
+Step 11: Execute the index.html file from frontend using the Live Server
+Step 12: Vote for any Candidate. Metamask will ask for confirmation for the first operation, select yes and continue.
+
+Practical 13: Decentralized App using HardHat
+
+Filename: /contracts/addition.sol
+//SPDX-License-Identifier: MIT pragma solidity ^0.8.21;
+contract Addition {
+function add(uint a, uint b) public pure returns (uint) { return a + b;
+}
+}
+Step 11: Compile the Project after developing the addition Smart Contract
+Command: npx hardhat compile
+Step 12: Navigate to Script Folder and Create the Deployment File
+Filename: /scripts/deploy.js
+import { network } from "hardhat";
+
+async function main() {
+const { ethers } = await network.create();
+const Addition = await ethers.getContractFactory("Addition"); const addition = await Addition.deploy();
+await addition.waitForDeployment(); console.log(
+"Addition contract deployed to:", await addition.getAddress()
+);
+}
+main().catch((error) => { console.error(error);
+process.exitCode = 1;
+});
+Step 13: Installing the required packages for Running the Script Command
+Command: npm install --save-dev @nomicfoundation/hardhat-ethers
+Verifying the Installation
+Command: npm list @nomicfoundation/hardhat-ethers
+Step 14: If the compile command doesn’t work/doesn’t compile your addition contract then first clean the environment first
+Command:
+npx hardhat clean
+npx hardhat compile –force
+Step 15: Open a new terminal session and execute the following command
+Command: npx hardhat node
+Step 16: Finally deploy/running the addition contract
+Command: npx hardhat run scripts/deploy.js --network localhost
+Step 17: Creating a Simple FrontEnd for Addition
+Filename: /frontend/index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Addition DApp</title>
+<style>
+body {
+font-family: Arial, sans-serif; background-color: #f2f2f2;
+text-align: center; padding-top: 80px;
+}
+.container {
+width: 350px; margin: auto; padding: 30px;
+background-color: white; border-radius: 10px;
+box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+input {
+width: 90%;
+padding: 10px; margin: 10px 0;
+font-size: 16px;
+}
+button {
+padding: 10px 25px; margin-top: 10px;
+font-size: 16px; cursor: pointer;
+}
+#result {
+margin-top: 20px; font-size: 20px;
+font-weight: bold;
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Addition DApp</h1>
+
+<input
+type="number" id="num1"
+placeholder="Enter first number"
+>
+
+<input
+type="number" id="num2"
+placeholder="Enter second number"
+>
+
+<br>
+
+<button id="addButton"> Add
+</button>
+
+<p id="result">Result: -</p>
+
+</div>
+
+<script
+src="https://cdn.jsdelivr.net/npm/ethers@6.15.0/dist/ethers.umd.min.js"></sc ript>
+<script src="./app.js"></script>
+
+</body>
+</html>
+Filename: /frontend/app.js
+const contractAddress ="0x5FbDB2315678afecb367f032d93F642f64180aa3";
+const contractABI = [
+"function add(uint256 a, uint256 b) view returns (uint256)"
+];
+const provider =
+new ethers.JsonRpcProvider("http://127.0.0.1:8545");
+const contract =
+new ethers.Contract( contractAddress, contractABI,
+provider
+);
+document.getElementById("addButton").addEventListener("click", async () => {
+const num1 =
+document.getElementById("num1").value;
+const num2 =
+document.getElementById("num2").value;
+const result =
+document.getElementById("result");
+if (num1 === "" || num2 === "") {
+result.innerText = "Please enter both numbers."; return;
+}
+try {
+const answer =
+await contract.add(num1, num2);
+result.innerText =
+"Result: " + answer.toString();
+} catch (error) {
+
+console.error(error);
+
+result.innerText =
+"Error: " + error.message;
+}
+});
+Step 18: Host the index.html file using Live Server
+Step 19: Performing Addition
+Step 20: Verifying successful demonstration of DApp
+Checking the terminal where hardapp is running
+
+Practical 14: Hyperledger Fabric Chaincode
+
+{
+"name": "student-chaincode", "version": "1.0.0",
+"main": "index.js", "scripts": {
+"start": "fabric-chaincode-node start"
+},
+"dependencies": {
+"fabric-contract-api": "^2.5.0",
+"fabric-shim": "^2.5.0"
+}
+}
+Explanation:
+main is the entry file Fabric loads.
+start is how the peer launches the chaincode inside its container.
+fabric-contract-api provides the Contract class you extend, and fabric-shim is the layer that connects your code to the peer.
+Step 17: Write index.js as mentioned below
+'use strict';
+const StudentContract = require('./lib/studentContract'); module.exports.contracts = [StudentContract];
+Step 18: Write lib/studentContract.js File as mentioned below
+'use strict';
+const { Contract } = require('fabric-contract-api'); class StudentContract extends Contract {
+// Seed the ledger with sample students. async InitLedger(ctx) {
+const students = [
+{ id: 'S001', name: 'Asha Patil', age: 22, course: 'MSc Computer Science', grade: 'A' },
+{ id: 'S002', name: 'Rohan Mehta', age: 23, course: 'MSc Computer Science', grade: 'B+' },
+{ id: 'S003', name: 'Sara Khan', age: 22, course: 'MSc Data Science', grade: 'A-' },
+];
+for (const s of students) { await ctx.stub.putState(s.id,
+Buffer.from(JSON.stringify(s)));
+}
+}
+// Add a new student; fails if the ID already exists. async CreateStudent(ctx, id, name, age, course, grade) {
+if (await this.StudentExists(ctx, id)) {
+throw new Error(`Student ${id} already exists`);
+}
+const student = { id, name, age: parseInt(age, 10), course, grade };
+await	ctx.stub.putState(id,
+Buffer.from(JSON.stringify(student))); return JSON.stringify(student);
+}
+// Return the student stored under this ID. async ReadStudent(ctx, id) {
+const data = await ctx.stub.getState(id); if (!data || data.length === 0) {
+throw new Error(`Student ${id} does not exist`);
+}
+return data.toString();
+}
+// Overwrite an existing student record.
+async UpdateStudent(ctx, id, name, age, course, grade) { if (!(await this.StudentExists(ctx, id))) {
+throw new Error(`Student ${id} does not exist`);
+}
+const student = { id, name, age: parseInt(age, 10), course, grade };
+await	ctx.stub.putState(id, Buffer.from(JSON.stringify(student)));
+return JSON.stringify(student);
+}
+// Remove a student from the ledger state. async DeleteStudent(ctx, id) {
+if (!(await this.StudentExists(ctx, id))) {
+throw new Error(`Student ${id} does not exist`);
+}
+await ctx.stub.deleteState(id);
+}
+// True if a student with this ID is on the ledger. async StudentExists(ctx, id) {
+const data = await ctx.stub.getState(id); return !!data && data.length > 0;
+}
+// Return every student on the ledger. async GetAllStudents(ctx) {
+const results = [];
+const iterator = await ctx.stub.getStateByRange('', ''); let r = await iterator.next();
+while (!r.done) {
+results.push(JSON.parse(r.value.value.toString('utf8'))); r = await iterator.next();
+}
+await iterator.close();
+return JSON.stringify(results);
+}
+}
+module.exports = StudentContract;
+Explanation:
+InitLedger	Loads sample students into the ledger
+StudentExists	Checks whether an ID is already on the ledger (helper) CreateStudent	Adds a new student; fails if the ID exists
+ReadStudent	Returns the student with a given ID; fails if missing UpdateStudent	Overwrites an existing student; fails if missing DeleteStudent	Removes a student from the world state GetAllStudents	Returns every student on the ledger
+Step 19: Ensure successful creation of all the files
+Command 01: ls -R ~/Practical-14/Student-Chaincode
+Command 02: docker run --rm -v
+$HOME/Practical-14/Student-Chaincode:/cc -w /cc node:18 sh -c “node
+-- check index.js && node --check lib/studentContract.js && echo FILES-OK”
+Explanation: This procedure confirms the structure is right and that both JavaScript files have no syntax errors. The node check runs inside a Docker container, so Node.js is not needed on your machine (the first run downloads the node image).
+Step 20: Start the network and deploy the chaincode
+Command: cd ~/fabric-samples/test-network
+Command 02: ./network.sh down
+Explanation: Ensure if any chaincode networks running prior are all shut down.
+Command 03: ./network.sh up createChannel -c mychannel -ca
+Explanation: This command starts the Fabric test network (one orderer, two peers for Org1 and Org2) and creates a channel named mychannel that both peers join. The -ca flag also starts Certificate Authority containers, so identities for the organizations are issued by CAs instead of pre-generated files. In short, it builds the network your chaincode will be deployed on.
+Command 04: docker ps
+Explanation: This command displays all the running docker containers and portrays different parameters about running docker containers.
+Step 21: Deploy the Chaincode
+Command: ./network.sh deployCC -c mychannel -ccn student -ccp
+$HOME/Practical-14/Student-Chaincode -ccl javascript
+Explanation: This command deploys your chaincode onto the network by running the full Fabric lifecycle: it packages the code, installs it on both peers, gets approval from Org1 and Org2, and commits it to mychannel.
+The options say which channel to use (-c mychannel), what to name the chaincode (-ccn student), where your code is (-ccp), and its language (-ccl javascript). The first run is slow because Docker builds a Node.js image and runs npm install.
+D) Testing the Chaincode
+Step 22: Create the helper file fabric-env.sh
+Explanation: : The peer tool needs several environment variables (which organization you are, which peer to use, where the certificates are). This file sets them once and defines a short function called invoke that sends a transaction to both organizations for endorsement. Paste the whole block into the terminal, not into an editor.
+Command: nvim ~/fabric-env.sh (use nano or any preferred text editor)
+cd ~/fabric-samples/test-network export PATH=
+HOME/fabric-samples/bin:PATH
+export FABRIC_CFG_PATH=$HOME/fabric-samples/config/ export CORE_PEER_TLS_ENABLED=true
+export CORE_PEER_LOCALMSPID="Org1MSP"
+N=$HOME/fabric-samples/test-network/organizations ORDERER_CA=$N/ordererOrganizations/example.com/orderers/orderer.e xample.com/msp/tlscacerts/tlsca.example.com-cert.pem ORG1_TLS=$N/peerOrganizations/org1.example.com/peers/peer0.org1.e xample.com/tls/ca.crt ORG2_TLS=$N/peerOrganizations/org2.example.com/peers/peer0.org2.e xample.com/tls/ca.crt
+export CORE_PEER_TLS_ROOTCERT_FILE=$ORG1_TLS
+export CORE_PEER_MSPCONFIGPATH=$N/peerOrganizations/org1.example.com/use rs/Admin@org1.example.com/msp
+export CORE_PEER_ADDRESS=localhost:7051
+
+invoke() {
+local a=(-o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile "$ORDERER_CA")
+a+=(-C mychannel -n student)
+a+=(--peerAddresses localhost:7051 --tlsRootCertFiles "$ORG1_TLS") a+=(--peerAddresses localhost:9051 --tlsRootCertFiles "$ORG2_TLS") peer chaincode invoke "a[@]"-c"1"
+}
+Step 23: Load the Helper File and Verify it
+Command: source ~/fabric-env.sh
+Command: type invoke
+Explanation: Source runs the file in your current terminal so the variables and the invoke function become available. You must repeat this command every time you open a new Ubuntu window.
+Step 24: Load the Sample Students
+Command: invoke ‘{“function”:”InitLedger”,”Args”:[]}’
+Explanation: InitLedger writes the sample students into the world state. Wait about 3 seconds afterwards so the block is committed.
+Step 25: Query all Students
+Command: peer chaincode query -C mychannel -n student -c ‘{“Args”:[“GetAllStudents”]}’
+Explanation: A query reads from one peer and creates no transaction, so it is fast.
+Step 26: Create a Student Record
+Command: invoke ‘{“function”:”CreateStudent”,”Args”:[“S004”, “Arv”, “22”, “MSc Computer Science”,”A+”]}’
+Explanation: CreateStudent changes the ledger, so it is sent with invoke. Arguments are in order: id, name, age, course, grade.
+Step 27: Read the new added Student Record
+Command: peer chaincode query -C mychannel -n student -c '{"Args":["ReadStudent","S004"]}'
+Explanation: This command reads the record of student S004 from the ledger. -C mychannel picks the channel, -n student picks the chaincode, and -c calls the ReadStudent function with the argument S004. It's a query, so it reads from one peer only and creates no transaction.
+
+It prints the student's JSON record if S004 exists. If you haven't created S004 yet, or you already deleted it, you'll get the error "Student S004 does not exist", which is the correct result in that case.
+Step 28: Update a Student Record
+Command: invoke '{"function":"UpdateStudent","Args":["S004","Arv","22","MSc Computer Science","C+"]}'
+Verify: peer chaincode query -C mychannel -n student -c '{"Args":["ReadStudent","S004"]}'
+Step 29: Delete a Student Record
+Command: invoke '{"function":"DeleteStudent","Args":["S004"]}'
+Explanation: Error occurred interprets the student does NOT exist
+Step 30: Cleaning up the environment (Performed at the very end)
+Command: ./network.sh down
+Explanation: This command shuts down the Fabric test network. It stops and removes all the containers (peers, orderer, CAs, and your chaincode containers) and deletes the generated certificates and channel files, so the next run starts completely fresh.
+
+Because it wipes the ledger, any students you created are lost. That's why it's the first step before a redeployment and the last step when you finish the practical. Run it from ~/fabric-samples/test-network.
+
+Practical 15: Real World Smart Contracts
+
+Question 01: Solidity Smart Contract for an Online Shopping System
+
+Filename: onlineShopping.sol
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.21;
+
+contract product { uint productId;
+string productName; uint price;
+uint stock;
+
+constructor(uint id, string memory name, uint productPrice, uint productStock) {
+productId = id; productName = name; price = productPrice; stock = productStock;
+}
+
+function displayProduct() public view returns (uint, string memory, uint, uint) {
+return (productId, productName, price, stock);
+}
+}
+
+contract onlineStore is product {
+constructor(uint id, string memory name, uint price, uint stock) product(id, name, price, stock) {}
+
+function purchase(uint q) public payable { require(stock >= q, "Product out of stock"); require(msg.value == q * price, "Wrong Payment"); stock = stock - q;
+}
+}}}}
+
+Question 02: Solidity Smart Contract for a Vehicle Rental Platform using Inheritance.
+
+Filename: vehicleRental.sol
+// SPDX-License-Identifier: MIT pragma solidity ^0.8.21;
+
+contract Vehicle {
+string vehicleRegistration; string vehicleBrand;
+uint vehicleRent;
+constructor(string memory regNo, string memory brand, uint price)
+{
+vehicleRegistration = regNo; vehicleBrand = brand; vehicleRent = price;
+}
+}
+contract CarRental is Vehicle { address renter;
+bool available = true; uint dueTime;
+event VehicleRented(address indexed renter, uint rentalDays, uint amount);
+event VehicleReturned(address indexed renter, uint penalty);
+constructor(string memory _regNo, string memory _brand, uint
+_price)
+Vehicle(_regNo, _brand, _price) {}
+function rentVehicle(uint _days) public payable { require(available, "Vehicle not available"); require(_days > 0 && msg.value >= vehicleRent * _days,
+"Invalid days or payment");
+(available, renter, dueTime) = (false, msg.sender, block.timestamp + _days * 1 minutes);
+emit VehicleRented(msg.sender, _days, msg.value);
+}
+// 50% of daily price per late day (partial day counts as full) function calculatePenalty() public view returns (uint) {
+if (available || block.timestamp <= dueTime) return 0; return ((block.timestamp - dueTime) / 1 minutes + 1) *
+vehicleRent / 2;
+}
+
+function returnVehicle() public payable {
+require(!available && msg.sender == renter, "Not renter or not rented");
+uint penalty = calculatePenalty(); require(msg.value >= penalty, "Pay late penalty"); available = true;
+emit VehicleReturned(msg.sender, penalty);
+}
+}
+
+Question	03:	Solidity	Smart	Contract	to	manage	Doctor Appointments.
+
+Filename: doctorAppointments.sol
+// SPDX-License-Identifier: MIT pragma solidity ^0.8.20;
+
+contract Doctor { string public name;
+string public specialization; uint public fee; // in wei address public immutable owner;
+
+constructor(string memory _name, string memory _spec, uint _fee)
+{
+name = _name; specialization = _spec; fee = _fee;
+owner = msg.sender;
+}
+}
+contract Hospital is Doctor {
+struct Booking { address patient; uint paid; }
+mapping(uint => Booking) public bookings; // slot (unix time) => booking
+event AppointmentBooked(address indexed patient, uint slot, uint amount);
+event AppointmentCancelled(address indexed patient, uint slot, uint refund);
+constructor(string memory _name, string memory _spec, uint _fee) Doctor(_name, _spec, _fee) {}
+function bookAppointment(uint slot) external payable { require(slot > block.timestamp, "Slot in past"); require(bookings[slot].patient == address(0), "Slot booked"); require(msg.value == fee, "Pay exact fee");
+bookings[slot] = Booking(msg.sender, msg.value); emit AppointmentBooked(msg.sender, slot, msg.value);
+}
+// Policy: full refund if 24+ hours before slot, else 50% function cancelAppointment(uint slot) external {
+Booking memory b = bookings[slot]; require(b.patient == msg.sender, "Not your slot"); require(slot > block.timestamp, "Slot passed");
+uint refund = slot - block.timestamp >= 1 days ? b.paid : b.paid / 2;
+delete bookings[slot]; // update state before sending Ether
+(bool ok, ) = payable(msg.sender).call{value: refund}("");
+require(ok, "Refund failed");
+emit AppointmentCancelled(msg.sender, slot, refund);
+}
+
+function updateFee(uint _fee) external { require(msg.sender == owner, "Only owner"); fee = _fee;
+}
+}
